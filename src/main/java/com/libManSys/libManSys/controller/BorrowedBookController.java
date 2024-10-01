@@ -6,10 +6,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.libManSys.libManSys.model.Book;
 import com.libManSys.libManSys.model.BorrowedBook;
+import com.libManSys.libManSys.model.User;
 import com.libManSys.libManSys.service.BorrowedBookService;
 
 @RestController
@@ -32,9 +35,21 @@ public class BorrowedBookController {
         return borrowedBookService.getBorrowedBookById(id);
     }
 
+//    @PostMapping
+//     public BorrowedBook saveBorrowedBook(@RequestBody BorrowedBookRequest request) {
+//         User user = request.getUser();
+//         Book book = request.getBook();
+//         return borrowedBookService.saveBorrowedBook(user, book);
+//     }
+
     @PostMapping
-    public BorrowedBook saveBorrowedBook(BorrowedBook borrowedBook){
-        return borrowedBookService.saveBorrowedBook(borrowedBook);
+    public BorrowedBook saveBorrowedBook(User user, Book book){
+        return borrowedBookService.saveBorrowedBook(user, book);
+    }
+
+    @PostMapping("/history")
+    public List<BorrowedBook> getBorrowedBookHistory(User user, Book book){
+        return borrowedBookService.getBorrowedBookHistory(user, book);
     }
 
     @PutMapping("/{id}")
