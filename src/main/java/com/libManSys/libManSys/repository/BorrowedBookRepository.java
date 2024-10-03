@@ -11,7 +11,8 @@ import com.libManSys.libManSys.model.BorrowedBook;
 import com.libManSys.libManSys.model.User;
 
 @Repository
-public interface BorrowedBookRepository extends JpaRepository<BorrowedBook, Integer>  {
+public interface BorrowedBookRepository extends JpaRepository<BorrowedBook, Long>  {
     List<BorrowedBook> findByUserAndBook(User user, Book book);
     List<BorrowedBook> findByReturnDateIsBefore(LocalDateTime date);
+    List<BorrowedBook> findByUser_UserId(Long userId);
 }

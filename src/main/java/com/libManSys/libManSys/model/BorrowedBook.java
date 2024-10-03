@@ -40,8 +40,8 @@ public class BorrowedBook {
 
     
 
-    public BorrowedBook(long borrowed_book_id, LocalDateTime borrowDate, LocalDateTime returnDate, Book book, User user) {
-        this.borrowedBookId = borrowed_book_id;
+    public BorrowedBook(long borrowedBookId, LocalDateTime borrowDate, LocalDateTime returnDate, Book book, User user) {
+        this.borrowedBookId = borrowedBookId;
         this.borrowDate = borrowDate;
         this.returnDate = returnDate;
         this.book = book;

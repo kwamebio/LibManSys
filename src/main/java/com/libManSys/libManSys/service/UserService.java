@@ -5,9 +5,9 @@ import com.libManSys.libManSys.model.User;
 
 public interface UserService {
     List<User> getAllUsers();
-    User getUserById(int id);
+    User getUserById(Long id);
     User saveUser(User user);
     User updateUser(User user);
-    void deleteUser(int id);
+    void deleteUser(Long id);
     
 }

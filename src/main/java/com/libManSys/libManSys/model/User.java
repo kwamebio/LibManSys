@@ -1,5 +1,7 @@
 package com.libManSys.libManSys.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -7,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -28,16 +31,24 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @OneToMany(mappedBy = "user")
+    private List<BorrowedBook> borrowedBooks;
+
     public User() {
 
     }
 
-    public User(Long userId, String name, String email, String password) {
+    
+
+    public User(Long userId, String name, String email, String password, List<BorrowedBook> borrowedBooks) {
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.borrowedBooks = borrowedBooks;
     }
+
+
 
     public Long getUserId() {
         return userId;
@@ -63,6 +74,15 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public List<BorrowedBook> getBorrowedBooks() {
+        return borrowedBooks;
+    }
+
+    public void setBorrowedBooks(List<BorrowedBook> borrowedBooks) {
+        this.borrowedBooks = borrowedBooks;
+    }
+    
 
 
     

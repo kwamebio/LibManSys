@@ -11,17 +11,22 @@ import com.libManSys.libManSys.model.BorrowedBook;
 import com.libManSys.libManSys.model.User;
 import com.libManSys.libManSys.repository.BookRepository;
 import com.libManSys.libManSys.repository.BorrowedBookRepository;
+import com.libManSys.libManSys.repository.UserRepository;
 import com.libManSys.libManSys.service.BorrowedBookService;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class BorrowedBookServiceImplement implements BorrowedBookService {
 
     private final BorrowedBookRepository borrowedBookRepository;
     private final BookRepository bookRepository;
+    private final UserRepository userRepository;
 
-    public BorrowedBookServiceImplement(BorrowedBookRepository borrowedBookRepository, BookRepository bookRepository) {
+    public BorrowedBookServiceImplement(BorrowedBookRepository borrowedBookRepository, BookRepository bookRepository, UserRepository userRepository) {
         this.borrowedBookRepository = borrowedBookRepository;
         this.bookRepository = bookRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -31,12 +36,15 @@ public class BorrowedBookServiceImplement implements BorrowedBookService {
 
 
     @Override
-    public BorrowedBook getBorrowedBookById(int id) {
+    public BorrowedBook getBorrowedBookById(Long id) {
         return borrowedBookRepository.findById(id).orElse(null);
     }
 
-    @Override
-    public BorrowedBook saveBorrowedBook(User user, Book book) {
+    
+    @Transactional
+    public BorrowedBook borrowBook(Long userId, Long book_id){
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Book book = bookRepository.findById(book_id).orElseThrow(() -> new RuntimeException("Book not found"));
         if(book.getStatus() == BookStatus.BORROWED){
             throw new RuntimeException("Book is already borrowed");
         }
@@ -51,6 +59,19 @@ public class BorrowedBookServiceImplement implements BorrowedBookService {
             bookRepository.save(book);
             
             return borrowedBook;
+    }
+
+    @Transactional
+    public BorrowedBook returnBook(Long borrowedBookId){
+        BorrowedBook borrowedBook = borrowedBookRepository.findById(borrowedBookId).orElseThrow(() -> new RuntimeException("Borrowed Book not found"));
+        Book book = borrowedBook.getBook();
+        if(book.getStatus() == BookStatus.AVAILABLE){
+            throw new RuntimeException("Book is already returned");
+        }
+        borrowedBook.setReturnDate(LocalDateTime.now());
+        book.setStatus(BookStatus.AVAILABLE);
+        bookRepository.save(book);
+        return borrowedBook;
     }
 
     // @Override
@@ -71,22 +92,8 @@ public class BorrowedBookServiceImplement implements BorrowedBookService {
     // }
 
     @Override
-    public List<BorrowedBook> getBorrowedBookHistory(User user, Book book) {
-        List<BorrowedBook> borrowedBooks = borrowedBookRepository.findByUserAndBook(user, book);
-        
-        if (borrowedBooks.isEmpty()) {
-            throw new RuntimeException("Borrowing record not found.");
-        }
-
-        for (BorrowedBook borrowedBook : borrowedBooks) {
-            if (LocalDateTime.now().isAfter(borrowedBook.getReturnDate())) {
-                System.out.println("Book is overdue");
-            }
-            book.setStatus(BookStatus.AVAILABLE);
-            bookRepository.save(book);
-        }
-
-        return borrowedBooks;
+    public List<BorrowedBook> getBorrowedBookHistory(Long userId) {
+        return borrowedBookRepository.findByUser_UserId(userId);
     }
 
     @Override
@@ -102,7 +109,7 @@ public class BorrowedBookServiceImplement implements BorrowedBookService {
 
 
     @Override
-    public BorrowedBook updateBorrowedBook(int id, BorrowedBook borrowedBook) {
+    public BorrowedBook updateBorrowedBook(Long id, BorrowedBook borrowedBook) {
         BorrowedBook existingBorrowedBook = borrowedBookRepository.findById(id).orElseThrow(() -> new RuntimeException("Borrowed Book not found"));
 
         existingBorrowedBook.setBook(borrowedBook.getBook());
@@ -113,7 +120,7 @@ public class BorrowedBookServiceImplement implements BorrowedBookService {
     }
 
     @Override
-    public void deleteBorrowedBook(int id) {
+    public void deleteBorrowedBook(Long id) {
         borrowedBookRepository.deleteById(id);
     }
     
