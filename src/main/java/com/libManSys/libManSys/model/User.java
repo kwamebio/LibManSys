@@ -31,6 +31,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<BorrowedBook> borrowedBooks;
 

@@ -55,6 +55,8 @@ public class BorrowedBookServiceImplement implements BorrowedBookService {
             borrowedBook.setReturnDate(LocalDateTime.now().plusDays(7));
             
             borrowedBookRepository.save(borrowedBook);
+            // book.setBorrowDate(LocalDateTime.now());
+            // book.setReturnDate(LocalDateTime.now().plusDays(7));
             book.setStatus(BookStatus.BORROWED);
             bookRepository.save(book);
             
